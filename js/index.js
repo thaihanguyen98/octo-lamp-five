@@ -19,37 +19,55 @@
       5. Add a countdown timer - when the time is up, end the quiz, display the score and highlight the correct answers
 *************************** */
 
-window.addEventListener('DOMContentLoaded', () => {
-  const start = document.querySelector('#start');
-  start.addEventListener('click', function (e) {
-    document.querySelector('#quizBlock').style.display = 'block';
-    start.style.display = 'none';
-  });
+window.addEventListener("DOMContentLoaded", () => {
+  const start = document.querySelector("#start");
+
+  function showQuiz() {
+    document.querySelector("#quizBlock").style.display = "block";
+    start.style.display = "none";
+  }
+
+  start.addEventListener("click", showQuiz);
   // quizArray QUESTIONS & ANSWERS
   // q = QUESTION, o = OPTIONS, a = CORRECT ANSWER
   // Basic ideas from https://code-boxx.com/simple-javascript-quiz/
   const quizArray = [
     {
-      q: 'Which is the third planet from the sun?',
-      o: ['Saturn', 'Earth', 'Pluto', 'Mars'],
+      q: "Which is the third planet from the sun?",
+      o: ["Saturn", "Earth", "Pluto", "Mars"],
       a: 1, // array index 1 - so Earth is the correct answer here
     },
     {
-      q: 'Which is the largest ocean on Earth?',
-      o: ['Atlantic Ocean', 'Indian Ocean', 'Arctic Ocean', 'Pacific Ocean'],
+      q: "Which is the largest ocean on Earth?",
+      o: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
       a: 3,
     },
     {
-      q: 'What is the capital of Australia',
-      o: ['Sydney', 'Canberra', 'Melbourne', 'Perth'],
+      q: "What is the capital of Australia",
+      o: ["Sydney", "Canberra", "Melbourne", "Perth"],
+      a: 1,
+    },
+    {
+      q: "What do the colours represent for Australia ",
+      o: ["Green & Orange", "Green & Red", "Green & Blue", "Green & Gold"],
+      a: 3,
+    },
+    {
+      q: "Which dessert does not represent Australia",
+      o: ["Cheesecake", "Pavolva", "Anzac Biscuit", "Lamingtons"],
+      a: 0,
+    },
+    {
+      q: "Which animal represents Australia?",
+      o: ["Donkey", "Eagle", "Kangaroo", "Dinosaur"],
       a: 1,
     },
   ];
 
   // function to Display the quiz questions and answers from the object
   const displayQuiz = () => {
-    const quizWrap = document.querySelector('#quizWrap');
-    let quizDisplay = '';
+    const quizWrap = document.querySelector("#quizWrap");
+    let quizDisplay = "";
     quizArray.map((quizItem, index) => {
       quizDisplay += `<ul class="list-group">
                    Q - ${quizItem.q}
@@ -66,25 +84,53 @@ window.addEventListener('DOMContentLoaded', () => {
   // Calculate the score
   const calculateScore = () => {
     let score = 0;
-    quizArray.map((quizItem, index) => {
-      for (let i = 0; i < 4; i++) {
+    quizArray.forEach((quizItem, index) => {
+      for (let i = 0; i < quizItem.o.length; i++) {
         //highlight the li if it is the correct answer
         let li = `li_${index}_${i}`;
         let r = `radio_${index}_${i}`;
-        liElement = document.querySelector('#' + li);
-        radioElement = document.querySelector('#' + r);
+        let liElement = document.querySelector("#" + li);
+        let radioElement = document.querySelector("#" + r);
 
         if (quizItem.a == i) {
           //change background color of li element here
+          liElement.style.background = "lightgreen";
         }
 
-        if (radioElement.checked) {
+        if (radioElement.checked && quizItem.a === i) {
           // code for task 1 goes here
+          score++;
         }
       }
     });
+    document.querySelector(
+      "#score"
+    ).textContent = `Your score is ${score} out of ${quizArray.length}`;
+  };
+
+  document.addEventListener("click", (e) => {
+    if (e.target && e.target.id === "btnSubmit") {
+      calculateScore();
+    }
+  });
+
+  //countdown timer
+  const startTimer = (duration) => {
+    let timeRemaining = duration;
+    const countdownElement = document.querySelector("#time");
+
+    timer = setInterval(() => {
+      countdownElement.textContent = timeRemaining;
+      timeRemaining--;
+
+      if (timeRemaining < 0) {
+        clearInterval(timer);
+        calculateScore();
+      }
+    }, 1000);
   };
 
   // call the displayQuiz function
   displayQuiz();
+  startTimer(60);
 });
