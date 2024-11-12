@@ -60,7 +60,7 @@ window.addEventListener("DOMContentLoaded", () => {
     {
       q: "Which animal represents Australia?",
       o: ["Donkey", "Eagle", "Kangaroo", "Dinosaur"],
-      a: 1,
+      a: 2,
     },
   ];
 
